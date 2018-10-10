@@ -63,13 +63,13 @@ int main (int argc, char* argv[]) {
             if(prob[j] && (row[curr][j] >= row[curr][j+1])) {   //compare with its right
                 peaks.push_back(coordinate(max_row-1, j));
             }
-            prob[j+1] = (row[curr][j] <= row[curr][j+1]);       //set prob of its right
+            prob[j+1] = prob[j+1] && (row[curr][j] <= row[curr][j+1]);       //set prob of its right
         }
         /* Last point */
         if(prob[max_col-1]) peaks.push_back(coordinate(max_row-1, max_col-1));
 
         output << peaks.size() << endl;
-        for(auto peak : peaks) output << peak.row() << ' ' << peak.col() << endl;
+        for(auto peak : peaks) output << peak.row()+1 << ' ' << peak.col()+1 << endl;
         input.close();
         output.close();
     }
