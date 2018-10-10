@@ -55,7 +55,7 @@ int main (int argc, char* argv[]) {
             /* Last col of the row */
             if(prob[max_col-1] && (row[curr][max_col-1] >= row[!curr][max_col-1]))  //compare with its down
                 peaks.push_back(coordinate(i, max_col-1)); 
-            prob[max_col-1] = (row[curr][max_col-1] >= row[!curr][max_col-1]);      //set prob of its down
+            prob[max_col-1] = (row[curr][max_col-1] <= row[!curr][max_col-1]);      //set prob of its down
             curr = !curr;
         }
         /* Last row */
