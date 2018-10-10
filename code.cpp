@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <vector>
 using namespace std;
 
@@ -10,45 +12,56 @@ public:
     int col() { return c; }
 };
 
-int main (void) {
+int main (int argc, char* argv[]) {
+    string dir = argv[1];
+    dir = "test_case/" + dir;
+    ifstream input(dir+"/matrix.data");
+    ofstream output(dir+"/final.peak");
+    /*ifstream input("mat.data");
+    ofstream output("final.peak");*/
     int max_row, max_col;
-    cin >> max_row >> max_col;
+    input >> max_row >> max_col;
     long int row[2][1000];
     int curr = 0, flag[1000];
     vector<coordinate> peaks;
 
-    for(int j=0; j<max_col; j++) {
-        cin >> row[0][j];
-        flag[j] = 1;
-    }
-    for(int i=0; i<max_row-1; i++) {
-        for(int j=0; j<max_col-1; j++) {
-            if(j==0) cin >> row[!curr][j];
-            cin >> row[!curr][j+1];
-            if(row[curr][j] >= row[curr][j+1]) {
-                if(flag[j] && (row[curr][j] >= row[!curr][j])) {
-                    peaks.push_back(coordinate(i, j));
-                //    cout << i << ' ' << j << endl;
+    if(input.is_open() && output.is_open()) {
+        for(int j=0; j<max_col; j++) {
+            input >> row[0][j];
+            flag[j] = 1;
+        }
+        for(int i=0; i<max_row-1; i++) {
+            for(int j=0; j<max_col-1; j++) {
+                if(j==0) input >> row[!curr][j];
+                input >> row[!curr][j+1];
+                if(row[curr][j] >= row[curr][j+1]) {
+                    if(flag[j] && (row[curr][j] >= row[!curr][j])) {
+                        peaks.push_back(coordinate(i, j));
+                    //    cout << i << ' ' << j << endl;
+                    }
                 }
+                flag[j+1] = flag[j+1] && (row[curr][j] <= row[curr][j+1]); 
+                flag[j] = (row[curr][j] <= row[!curr][j]); 
             }
-            flag[j+1] = flag[j+1] && (row[curr][j] <= row[curr][j+1]); 
-            flag[j] = (row[curr][j] <= row[!curr][j]); 
+            if(flag[max_col-1] && (row[curr][max_col-1] >= row[!curr][max_col-1])) peaks.push_back(coordinate(i, max_col-1)); 
+            flag[max_col-1] = (row[curr][max_col-1] >= row[!curr][max_col-1]); 
+            curr = !curr;
         }
-        if(flag[max_col-1] && (row[curr][max_col-1] >= row[!curr][max_col-1])) peaks.push_back(coordinate(i, max_col-1)); 
-        flag[max_col-1] = (row[curr][max_col-1] >= row[!curr][max_col-1]); 
-        curr = !curr;
-    }
-    for(int j=0; j<max_col-1; j++) {
-        if(flag[j] && (row[curr][j] >= row[curr][j+1])) {
-            peaks.push_back(coordinate(max_row-1, j));
-        //    cout << max_row-1 << ' ' << j << endl;
+        for(int j=0; j<max_col-1; j++) {
+            if(flag[j] && (row[curr][j] >= row[curr][j+1])) {
+                peaks.push_back(coordinate(max_row-1, j));
+            //    cout << max_row-1 << ' ' << j << endl;
+            }
+            flag[j+1] = (row[curr][j] <= row[curr][j+1]); 
         }
-        flag[j+1] = (row[curr][j] <= row[curr][j+1]); 
+        if(flag[max_col-1]) peaks.push_back(coordinate(max_row-1, max_col-1));
+        output << peaks.size() << endl;
+        for(auto peak : peaks) output << peak.row() << ' ' << peak.col() << endl;
+        input.close();
+        output.close();
     }
-    if(flag[max_col-1]) peaks.push_back(coordinate(max_row-1, max_col-1));
 
-    cout << peaks.size() << endl;
-    for(auto peak : peaks) cout << peak.row() << ' ' << peak.col() << endl;
-
+    else if(!input.is_open()) cout << "Unable to open testcase" << endl;
+    else cout << "Unable to open output" << endl;
     return 0;
 }
