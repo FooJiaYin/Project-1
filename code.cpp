@@ -38,36 +38,23 @@ int main (int argc, char* argv[]) {
             input >> row[0][j];
             prob[j] = 1;
         }
-        for(int i=0; i<max_row-1; i++) {
-            for(int j=0; j<max_col-1; j++) {
+        for(int i=0; i<max_row; i++) {
+            for(int j=0; j<max_col; j++) {
                 /* Read the next row */
-                if(j==0) input >> row[!curr][j]; 
-                input >> row[!curr][j+1];  
-                /* Comparing */
-                if(row[curr][j] >= row[curr][j+1]) {                    //compare with its right
-                    if(prob[j] && (row[curr][j] >= row[!curr][j])) {    //compare with its down
-                        peaks.push_back(coordinate(i, j));
-                    }
+                if(i<max_row-1) {
+                    if(j==0) input >> row[!curr][j]; 
+                    if(j<max_col-1) input >> row[!curr][j+1];          
                 }
-                prob[j+1] = prob[j+1] && (row[curr][j] <= row[curr][j+1]); //set prob of its right
-                prob[j] = (row[curr][j] <= row[!curr][j]);                 //set prob of its down
+                /* Comparing */
+                if(prob[j])
+                    if((j==max_col-1) || (row[curr][j] >= row[curr][j+1]))      //compare with its right
+                        if((i==max_row-1) || (row[curr][j] >= row[!curr][j]))   //compare with its down
+                            peaks.push_back(coordinate(i, j));
+                if(j<max_col-1) prob[j+1] = prob[j+1] && (row[curr][j] <= row[curr][j+1]); //set prob of its right
+                prob[j] = (row[curr][j] <= row[!curr][j]);                      //set prob of its down
             }
-            /* Last col of the row */
-            if(prob[max_col-1] && (row[curr][max_col-1] >= row[!curr][max_col-1]))  //compare with its down
-                peaks.push_back(coordinate(i, max_col-1)); 
-            prob[max_col-1] = (row[curr][max_col-1] <= row[!curr][max_col-1]);      //set prob of its down
             curr = !curr;
         }
-        /* Last row */
-        for(int j=0; j<max_col-1; j++) {
-            if(prob[j] && (row[curr][j] >= row[curr][j+1])) {   //compare with its right
-                peaks.push_back(coordinate(max_row-1, j));
-            }
-            prob[j+1] = prob[j+1] && (row[curr][j] <= row[curr][j+1]);       //set prob of its right
-        }
-        /* Last point */
-        if(prob[max_col-1]) peaks.push_back(coordinate(max_row-1, max_col-1));
-
         output << peaks.size() << endl;
         for(auto peak : peaks) output << peak.row()+1 << ' ' << peak.col()+1 << endl;
         input.close();
