@@ -1,0 +1,22 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    const int row = 15;
+    const int column = 15;
+    int iarr[row][column];
+
+    cout << row << ' ' << column << '\n';
+
+    for(int i = 0; i < row; i++)
+        for(int j = 0; j < column; j++)
+            iarr[i][j] = (i+1)*(j+1);
+
+    for(int i = 0; i < row; i++) {
+        for(int j = 0; j < column; j++)
+            cout << iarr[i][j] << "\t";
+        cout << endl;
+    }
+
+    return 0;
+}
