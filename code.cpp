@@ -13,10 +13,17 @@ public:
 };
 
 int main (int argc, char* argv[]) {
-    string dir = argv[1];
-    dir = "test_case/" + dir;
-    ifstream input(dir+"/matrix.data");
-    ofstream output(dir+"/final.peak");
+    string dir = argv[1], dir_in, dir_out;
+    if(dir=="TA_matrix_1" || dir=="TA_matrix_2" || dir=="TA_matrix_3") {
+        dir_in = "test_case/" + dir + ".data";
+        dir_out = "test_case/final.peak";
+    }
+    else {
+        dir_in = "test_case/" + dir + "/matrix.data";
+        dir_out = "test_case/" + dir + "/final.peak";
+    }
+    ifstream input(dir_in);
+    ofstream output(dir_out);
     /*ifstream input("mat.data");
     ofstream output("final.peak");*/
     int max_row, max_col;
