@@ -24,44 +24,50 @@ int main (int argc, char* argv[]) {
     }
     ifstream input(dir_in);
     ofstream output(dir_out);
-    /*ifstream input("mat.data");
-    ofstream output("final.peak");*/
+
     int max_row, max_col;
     input >> max_row >> max_col;
     long int row[2][1000];
-    int curr = 0, flag[1000];
-    vector<coordinate> peaks;
+    int curr = 0;
+    int prob[1000];           //probability of a point to become peak
+    vector<coordinate> peaks; //store the peaks
 
     if(input.is_open() && output.is_open()) {
+        /* Read the first row */
         for(int j=0; j<max_col; j++) {
             input >> row[0][j];
-            flag[j] = 1;
+            prob[j] = 1;
         }
         for(int i=0; i<max_row-1; i++) {
             for(int j=0; j<max_col-1; j++) {
-                if(j==0) input >> row[!curr][j];
-                input >> row[!curr][j+1];
-                if(row[curr][j] >= row[curr][j+1]) {
-                    if(flag[j] && (row[curr][j] >= row[!curr][j])) {
+                /* Read the next row */
+                if(j==0) input >> row[!curr][j]; 
+                input >> row[!curr][j+1];  
+                /* Comparing */
+                if(row[curr][j] >= row[curr][j+1]) {                    //compare with its right
+                    if(prob[j] && (row[curr][j] >= row[!curr][j])) {    //compare with its down
                         peaks.push_back(coordinate(i, j));
-                    //    cout << i << ' ' << j << endl;
                     }
                 }
-                flag[j+1] = flag[j+1] && (row[curr][j] <= row[curr][j+1]); 
-                flag[j] = (row[curr][j] <= row[!curr][j]); 
+                prob[j+1] = prob[j+1] && (row[curr][j] <= row[curr][j+1]); //set prob of its right
+                prob[j] = (row[curr][j] <= row[!curr][j]);                 //set prob of its down
             }
-            if(flag[max_col-1] && (row[curr][max_col-1] >= row[!curr][max_col-1])) peaks.push_back(coordinate(i, max_col-1)); 
-            flag[max_col-1] = (row[curr][max_col-1] >= row[!curr][max_col-1]); 
+            /* Last col of the row */
+            if(prob[max_col-1] && (row[curr][max_col-1] >= row[!curr][max_col-1]))  //compare with its down
+                peaks.push_back(coordinate(i, max_col-1)); 
+            prob[max_col-1] = (row[curr][max_col-1] >= row[!curr][max_col-1]);      //set prob of its down
             curr = !curr;
         }
+        /* Last row */
         for(int j=0; j<max_col-1; j++) {
-            if(flag[j] && (row[curr][j] >= row[curr][j+1])) {
+            if(prob[j] && (row[curr][j] >= row[curr][j+1])) {   //compare with its right
                 peaks.push_back(coordinate(max_row-1, j));
-            //    cout << max_row-1 << ' ' << j << endl;
             }
-            flag[j+1] = (row[curr][j] <= row[curr][j+1]); 
+            prob[j+1] = (row[curr][j] <= row[curr][j+1]);       //set prob of its right
         }
-        if(flag[max_col-1]) peaks.push_back(coordinate(max_row-1, max_col-1));
+        /* Last point */
+        if(prob[max_col-1]) peaks.push_back(coordinate(max_row-1, max_col-1));
+
         output << peaks.size() << endl;
         for(auto peak : peaks) output << peak.row() << ' ' << peak.col() << endl;
         input.close();
