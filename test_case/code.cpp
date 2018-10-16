@@ -14,14 +14,8 @@ public:
 
 int main (int argc, char* argv[]) {
     string dir = argv[1], dir_in, dir_out;
-    if(dir=="TA_matrix_1" || dir=="TA_matrix_2" || dir=="TA_matrix_3") {
-        dir_in = "test_case/" + dir + ".data";
-        dir_out = "test_case/final.peak";
-    }
-    else {
-        dir_in = "test_case/" + dir + "/matrix.data";
-        dir_out = "test_case/" + dir + "/final.peak";
-    }
+    dir_in = dir + "/matrix.data";
+    dir_out = dir + "/final.peak";
     ifstream input(dir_in);
     ofstream output(dir_out);
 
